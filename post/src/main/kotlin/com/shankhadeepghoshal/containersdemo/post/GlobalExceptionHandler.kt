@@ -1,6 +1,8 @@
 package com.shankhadeepghoshal.containersdemo.post
 
 import com.fasterxml.jackson.annotation.JsonFormat
+import com.shankhadeepghoshal.containersdemo.post.exception.ExternalServiceErringException
+import com.shankhadeepghoshal.containersdemo.post.exception.PostNotFoundException
 import mu.KotlinLogging
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -45,6 +47,17 @@ class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
     fun handleUserNotFound(ex: PostNotFoundException, webRequest: WebRequest): ResponseEntity<Any> {
         LOG.error("Post not found", ex)
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.message)
+    }
+
+    @ExceptionHandler(ExternalServiceErringException::class)
+    fun handleExternalServiceErringException(
+        ex: ExternalServiceErringException,
+        webRequest: WebRequest
+    ): ResponseEntity<Any> {
+        LOG.error("External service throwing error", ex)
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+            .header(HttpHeaders.RETRY_AFTER, "10")
+            .body(ex.message)
     }
 
     @ExceptionHandler(Exception::class, kotlin.Exception::class)
