@@ -62,7 +62,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: root
       SPRING_DATASOURCE_DRIVERCLASSNAME: com.mysql.cj.jdbc.Driver
       SPRING_DATASOURCE_URL: jdbc:mysql://post-database:3306/post?useSSL=false&allowPublicKeyRetrieval=true 
-      USER_URL: http://user-service:8081/user
+      USER_URL: http://user-service:8080/user
     depends_on:
       post-database:
         condition: service_healthy

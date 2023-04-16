@@ -9,16 +9,18 @@ import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 
+
 /**
  * @since 1.0
  * @author <a href="mailto:ghoshalshankhadeep@hotmail.com">Shankhadeep Ghoshal</a>
  **/
 
+private val kLogger = KotlinLogging.logger {}
+
 @RestController
 @RequestMapping("/")
 @Validated
 class Controller(private val postService: PostService) {
-    private val kLogger = KotlinLogging.logger {}
 
     @GetMapping("/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getPost(@PathVariable("id") id: Int): ResponseEntity<Any?> {
