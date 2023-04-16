@@ -1,5 +1,7 @@
 package com.shankhadeepghoshal.containersdemo.user
 
+import com.shankhadeepghoshal.containersdemo.user.exception.PostCountException
+import com.shankhadeepghoshal.containersdemo.user.exception.UserNotFoundException
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 
@@ -33,9 +35,26 @@ class Service(private val userRepo: Repository) {
         userRepo.delete(getUserByIdOrThrow(id))
     }
 
-    fun incrementPostCount(id: Int): User {
+    fun increasePostCount(id: Int): User {
         val user = getUserByIdOrThrow(id)
-        user.postCount = user.postCount + 1
+        return modifyPostCount(user, PostModificationState.INCREASE)
+    }
+
+    fun decreasePostCount(id: Int): User {
+        val user = getUserByIdOrThrow(id)
+        if (user.postCount < 1) {
+            throw PostCountException("Post count is currently 0. Cannot decrease")
+        } else {
+            return modifyPostCount(user, PostModificationState.DECREASE)
+        }
+    }
+
+    private fun modifyPostCount(user: User, postModificationState: PostModificationState): User {
+        when (postModificationState) {
+            PostModificationState.INCREASE -> user.postCount + 1
+            PostModificationState.DECREASE -> user.postCount - 1
+        }
+
         return userRepo.save(user)
     }
 
@@ -43,5 +62,10 @@ class Service(private val userRepo: Repository) {
         return userRepo.findById(id).orElseThrow {
             UserNotFoundException("User with id $id not found")
         }
+    }
+
+    private enum class PostModificationState {
+        INCREASE,
+        DECREASE
     }
 }

@@ -1,4 +1,4 @@
-package com.shankhadeepghoshal.containersdemo.user
+package com.shankhadeepghoshal.containersdemo.user.exception
 
 /**
  * @since 1.0

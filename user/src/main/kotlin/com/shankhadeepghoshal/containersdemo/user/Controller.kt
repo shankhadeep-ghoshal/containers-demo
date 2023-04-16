@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*
  * @since 1.0
  * @author <a href="mailto:ghoshalshankhadeep@hotmail.com">Shankhadeep Ghoshal</a>
  **/
-private val logger = KotlinLogging.logger {}
+private val kLogger = KotlinLogging.logger {}
 
 @RestController
 @RequestMapping("/")
@@ -25,13 +25,13 @@ class Controller(private val service: Service) {
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
     fun createUser(@Valid @RequestBody userRequestDto: UserRequestDto): ResponseEntity<User> {
-        logger.info { "Request received for username $userRequestDto for creation" }
+        kLogger.info { "Request received for username $userRequestDto for creation" }
         return ResponseEntity.ok(service.createUser(userRequestDto))
     }
 
     @GetMapping("/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getUserById(@PathVariable("id") id: Int): ResponseEntity<User> {
-        logger.info { "Request received for id $id for fetching user details" }
+        kLogger.info { "Request received for id $id for fetching user details" }
         return ResponseEntity.ok(service.getUserById(id))
     }
 
@@ -45,20 +45,26 @@ class Controller(private val service: Service) {
         @Valid @RequestBody userRequestDto: UserRequestDto
     ):
             ResponseEntity<User> {
-        logger.info { "Request received for username $userRequestDto for update for id $id" }
+        kLogger.info { "Request received for username $userRequestDto for update for id $id" }
         return ResponseEntity.ok(service.updateUser(id, userRequestDto))
     }
 
     @DeleteMapping("/{id}")
     fun deleteUser(@PathVariable("id") id: Int): ResponseEntity<Any> {
-        logger.info { "Request received user id $id for deletion" }
+        kLogger.info { "Request received user id $id for deletion" }
         service.deleteUserById(id)
         return ResponseEntity.status(HttpStatus.OK).build()
     }
 
-    @PutMapping("/{id}")
-    fun updatePostCount(@PathVariable("id") id: Int): ResponseEntity<Any> {
-        logger.info { "Request received user id $id for post incrementation" }
-        return ResponseEntity.ok(service.incrementPostCount(id))
+    @PutMapping("/{id}/increase")
+    fun increasePostCount(@PathVariable("id") id: Int): ResponseEntity<Any> {
+        kLogger.info { "Request received user id $id for post count increment" }
+        return ResponseEntity.ok(service.increasePostCount(id))
+    }
+
+    @PutMapping("/{id}/decrease")
+    fun decreasePostCount(@PathVariable("id") id: Int): ResponseEntity<Any> {
+        kLogger.info { "Request received user id $id for post count decrement" }
+        return ResponseEntity.ok(service.decreasePostCount(id))
     }
 }

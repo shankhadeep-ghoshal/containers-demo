@@ -1,5 +1,6 @@
 package com.shankhadeepghoshal.containersdemo.user
 
+import com.shankhadeepghoshal.containersdemo.user.exception.UserNotFoundException
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -89,10 +90,27 @@ class ServiceTest {
             .thenReturn(Optional.ofNullable(userExpectedPreIncrement))
         Mockito.`when`(repository.save(userExpectedPreIncrement))
             .thenReturn(userExpectedPostIncrement)
-        val userAfterPostCountIncreased = service.incrementPostCount(id)
+        val userAfterPostCountIncreased = service.increasePostCount(id)
 
         Assertions.assertEquals(1, userAfterPostCountIncreased.postCount)
         Mockito.verify(repository, Mockito.times(1)).findById(id)
         Mockito.verify(repository, Mockito.times(1)).save(userAfterPostCountIncreased)
+    }
+
+    @Test
+    fun decrementPostCount_WithUserPresent() {
+        val id = 1
+        val userExpectedPreDecrement = User(id = id, userName = "Balu", postCount = 1)
+        val userExpectedPostDecrement = User(id = id, userName = "Balu", postCount = 0)
+
+        Mockito.`when`(repository.findById(id))
+            .thenReturn(Optional.ofNullable(userExpectedPreDecrement))
+        Mockito.`when`(repository.save(userExpectedPreDecrement))
+            .thenReturn(userExpectedPostDecrement)
+        val userAfterPostCountDecreased = service.decreasePostCount(id)
+
+        Assertions.assertEquals(0, userAfterPostCountDecreased.postCount)
+        Mockito.verify(repository, Mockito.times(1)).findById(id)
+        Mockito.verify(repository, Mockito.times(1)).save(userAfterPostCountDecreased)
     }
 }

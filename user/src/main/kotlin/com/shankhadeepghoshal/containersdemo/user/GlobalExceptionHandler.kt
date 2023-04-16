@@ -1,6 +1,8 @@
 package com.shankhadeepghoshal.containersdemo.user
 
 import com.fasterxml.jackson.annotation.JsonFormat
+import com.shankhadeepghoshal.containersdemo.user.exception.PostCountException
+import com.shankhadeepghoshal.containersdemo.user.exception.UserNotFoundException
 import mu.KotlinLogging
 import org.springframework.http.*
 import org.springframework.web.bind.MethodArgumentNotValidException
@@ -15,7 +17,7 @@ import java.time.LocalDateTime
  * @author <a href="mailto:ghoshalshankhadeep@hotmail.com">Shankhadeep Ghoshal</a>
  **/
 
-private val logger = KotlinLogging.logger {}
+private val kLogger = KotlinLogging.logger {}
 
 @RestControllerAdvice
 class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
@@ -26,7 +28,7 @@ class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
         status: HttpStatusCode,
         request: WebRequest
     ): ResponseEntity<Any>? {
-        logger.error("Constraints violated", ex)
+        kLogger.error("Constraints violated", ex)
         val details = ex.fieldErrors.associate { it.field to it.defaultMessage }
         val validationErrorDetails = ValidationApiError(
             LocalDateTime.now(),
@@ -40,13 +42,20 @@ class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
 
     @ExceptionHandler(UserNotFoundException::class)
     fun handleUserNotFound(ex: UserNotFoundException, webRequest: WebRequest): ResponseEntity<Any> {
-        logger.error("User not found", ex)
+        kLogger.error("User not found", ex)
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.message)
+    }
+
+    @ExceptionHandler(PostCountException::class)
+    fun handlePostCountLessThanZero(ex: PostCountException, webRequest: WebRequest):
+            ResponseEntity<Any> {
+        kLogger.error("Post count less than zero", ex)
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(ex.message)
     }
 
     @ExceptionHandler(Exception::class, kotlin.Exception::class)
     fun handleServerErrors(ex: Exception, webRequest: WebRequest): ResponseEntity<Any> {
-        logger.error("Exception occurred", ex)
+        kLogger.error("Exception occurred", ex)
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something went wrong")
     }
 
