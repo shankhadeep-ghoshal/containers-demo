@@ -3,6 +3,7 @@ package com.shankhadeepghoshal.containersdemo.user
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.shankhadeepghoshal.containersdemo.user.exception.PostCountException
 import com.shankhadeepghoshal.containersdemo.user.exception.UserNotFoundException
+import com.shankhadeepghoshal.containersdemo.user.exception.UsernameExistsException
 import mu.KotlinLogging
 import org.springframework.http.*
 import org.springframework.web.bind.MethodArgumentNotValidException
@@ -37,13 +38,20 @@ class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
             details
         )
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(validationErrorDetails)
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(validationErrorDetails)
     }
 
     @ExceptionHandler(UserNotFoundException::class)
     fun handleUserNotFound(ex: UserNotFoundException, webRequest: WebRequest): ResponseEntity<Any> {
         kLogger.error("User not found", ex)
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.message)
+    }
+
+    @ExceptionHandler(UsernameExistsException::class)
+    fun handleUsernameExistsException(ex: UsernameExistsException, webRequest: WebRequest):
+            ResponseEntity<Any> {
+        kLogger.error("User already exists", ex)
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.message)
     }
 
     @ExceptionHandler(PostCountException::class)

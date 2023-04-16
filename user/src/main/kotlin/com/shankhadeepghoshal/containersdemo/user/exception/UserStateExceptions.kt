@@ -6,3 +6,4 @@ package com.shankhadeepghoshal.containersdemo.user.exception
  **/
 
 class UserNotFoundException(override val message: String) : RuntimeException(message)
+class UsernameExistsException(override val message: String) : RuntimeException(message)

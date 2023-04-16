@@ -30,10 +30,12 @@ class ServiceTest {
         val userExpected = User(id = 1, userName = userName, postCount = 0)
         val userToSupply = User(userName = userName, id = null)
 
+        Mockito.`when`(repository.getUserByUserName(userName)).thenReturn(null)
         Mockito.`when`(repository.save(userToSupply)).thenReturn(userExpected)
         val userReturned = service.createUser(UserRequestDto(userName))
 
         Assertions.assertEquals(userExpected, userReturned)
+        Mockito.verify(repository, Mockito.times(1)).getUserByUserName(userName)
         Mockito.verify(repository, Mockito.times(1)).save(userToSupply)
     }
 

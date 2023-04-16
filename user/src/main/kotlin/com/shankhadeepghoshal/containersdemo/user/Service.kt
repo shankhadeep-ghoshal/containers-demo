@@ -2,6 +2,7 @@ package com.shankhadeepghoshal.containersdemo.user
 
 import com.shankhadeepghoshal.containersdemo.user.exception.PostCountException
 import com.shankhadeepghoshal.containersdemo.user.exception.UserNotFoundException
+import com.shankhadeepghoshal.containersdemo.user.exception.UsernameExistsException
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 
@@ -15,7 +16,12 @@ import org.springframework.stereotype.Service
 class Service(private val userRepo: Repository) {
 
     fun createUser(userDto: UserRequestDto): User {
-        return userRepo.save(User(id = null, userName = userDto.userName))
+        val tempUser = userRepo.getUserByUserName(userDto.userName)
+        if (null == tempUser) {
+            return userRepo.save(User(id = null, userName = userDto.userName))
+        } else {
+            throw UsernameExistsException("User with username ${userDto.userName} already exists")
+        }
     }
 
     fun getUserById(id: Int): User {
