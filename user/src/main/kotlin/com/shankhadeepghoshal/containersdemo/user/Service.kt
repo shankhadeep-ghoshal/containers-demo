@@ -57,8 +57,8 @@ class Service(private val userRepo: Repository) {
 
     private fun modifyPostCount(user: User, postModificationState: PostModificationState): User {
         when (postModificationState) {
-            PostModificationState.INCREASE -> user.postCount + 1
-            PostModificationState.DECREASE -> user.postCount - 1
+            PostModificationState.INCREASE -> user.postCount = user.postCount + 1
+            PostModificationState.DECREASE -> user.postCount = user.postCount - 1
         }
 
         return userRepo.save(user)
