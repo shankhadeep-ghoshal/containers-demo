@@ -1,0 +1,12 @@
+server.port: 8080
+server.servlet.context-path: /post
+
+spring.jpa:
+  generate-ddl: true
+  show-sql: true
+
+post.rest:
+  user-base-url: ${USER_URL}
+  client:
+    connection-timeout: 30s
+    thread-pool-size: 10
